@@ -1,0 +1,9 @@
+{
+  "test_loss": 0.615678,
+  "test_accuracy": 0.712871,
+  "seed": 42,
+  "batch_size": 64,
+  "checkpoint": "models/best_net.pth",
+  "checkpoint_epoch": 69,
+  "checkpoint_best_val_loss": 0.532618
+}

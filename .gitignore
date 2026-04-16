@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+env/
+.DS_Store
+
+# Training outputs
+models/*.pth
+models/*.pt
