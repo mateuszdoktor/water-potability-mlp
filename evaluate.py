@@ -17,6 +17,9 @@ from config import (
     SEED,
     TRAIN_SPLIT,
     VAL_SPLIT,
+    HIDDEN_DIMS,
+    INPUT_DIM,
+    DROPOUT
 )
 
 def evaluate_model():
@@ -52,7 +55,11 @@ def evaluate_model():
         shuffle=False
     )
 
-    net = Net()
+    net = Net(
+        input_dim=INPUT_DIM,
+        hidden_dims=HIDDEN_DIMS,
+        dropout=DROPOUT,
+    )
     model_state = checkpoint["model_state_dict"] if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint else checkpoint
     net.load_state_dict(model_state)
     net.eval()

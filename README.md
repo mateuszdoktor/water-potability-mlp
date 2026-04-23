@@ -30,9 +30,9 @@ The project utilizes the **Water Potability** dataset. It contains physicochemic
 
 The model was evaluated using the dedicated test split after selecting the best checkpoint based on validation loss.
 
-| Architecture | Training Strategy | Accuracy | Test Loss | Parameter Scale | Observation |
+| Architecture | Accuracy | Test Loss | Observation |
 |:---|:---|:---:|:---:|:---:|:---|
-| **MLP** | From Scratch | **71.3%** | **0.6157** | Lightweight | Solid baseline for tabular physicochemical data. |
+| **MLP** | **72.28%** | **0.6157** | Solid baseline for tabular physicochemical data. |
 
 ---
 

@@ -20,18 +20,13 @@ from config import (
     TRAIN_SPLIT,
     VAL_SPLIT,
     WEIGHT_DECAY,
+    HIDDEN_DIMS,
+    INPUT_DIM,
+    DROPOUT
 )
 
 def train_model():
     set_seed(SEED)
-    net = Net()
-
-    criterion = nn.BCEWithLogitsLoss()
-    optimizer = optim.AdamW(
-        net.parameters(),
-        lr=LEARNING_RATE,
-        weight_decay=WEIGHT_DECAY,
-    )
 
     dataset = WaterDataset(str(DATA_PATH))
 
@@ -63,6 +58,19 @@ def train_model():
     val_acc = Accuracy(task="binary")
     accuracies = []
     losses = []
+
+    net = Net(
+        input_dim=INPUT_DIM,
+        hidden_dims=HIDDEN_DIMS,
+        dropout=DROPOUT,
+    )
+    
+    criterion = nn.BCEWithLogitsLoss()
+    optimizer = optim.AdamW(
+        net.parameters(),
+        lr=LEARNING_RATE,
+        weight_decay=WEIGHT_DECAY,
+    )
 
     for epoch in range(EPOCH_NUM):
         train_loss = 0.0

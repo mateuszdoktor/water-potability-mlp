@@ -1,33 +1,42 @@
 import torch.nn as nn
-import torch.nn.functional as functional
 import torch.nn.init as init
 
-DATA_FEATURES = 9
 
 class Net(nn.Module):
-    def __init__(self):
+    def __init__(self, input_dim: int, hidden_dims: list[int], dropout: float = 0.1) -> None:
         super().__init__()
-        self.fc1 = nn.Linear(DATA_FEATURES, 64)
-        self.bn1 = nn.BatchNorm1d(64)
-        self.fc2 = nn.Linear(64, 32)
-        self.bn2 = nn.BatchNorm1d(32)
-        self.dropout1 = nn.Dropout(p=0.20)
-        self.fc3 = nn.Linear(32, 1)
+        if not hidden_dims:
+            raise ValueError("hidden_dims must contain at least one layer size")
 
-        init.kaiming_uniform_(self.fc1.weight, nonlinearity='relu')
-        init.kaiming_uniform_(self.fc2.weight, nonlinearity='relu')
-        init.kaiming_uniform_(self.fc3.weight, nonlinearity='linear')
+        layers: list[nn.Module] = []
+        prev_dim = input_dim
+
+        for hidden_dim in hidden_dims:
+            layers.append(nn.Linear(prev_dim, hidden_dim))
+            layers.append(nn.BatchNorm1d(hidden_dim))
+            layers.append(nn.ELU())
+            if dropout > 0:
+                layers.append(nn.Dropout(dropout))
+            prev_dim = hidden_dim
+
+        layers.append(nn.Linear(prev_dim, 1))
+        self.network = nn.Sequential(*layers)
+        self._init_weights()
+
+    def _init_weights(self) -> None:
+        linear_layers = [layer for layer in self.network if isinstance(layer, nn.Linear)]
+        if not linear_layers:
+            return
+
+        for layer in linear_layers[:-1]:
+            init.kaiming_uniform_(layer.weight, nonlinearity="relu")
+            if layer.bias is not None:
+                init.zeros_(layer.bias)
+
+        output_layer = linear_layers[-1]
+        init.kaiming_uniform_(output_layer.weight, nonlinearity="linear")
+        if output_layer.bias is not None:
+            init.zeros_(output_layer.bias)
 
     def forward(self, x):
-        x = self.fc1(x)
-        x = self.bn1(x)
-        x = functional.relu(x)
-        x = self.dropout1(x)
-
-        x = self.fc2(x)
-        x = self.bn2(x)
-        x = functional.relu(x)
-
-        x = self.fc3(x)
-
-        return x
+        return self.network(x)
